@@ -2,8 +2,15 @@ package be.bxlformation.tu.assertions;
 
 import be.bxlformation.tu.Calculation;
 import be.bxlformation.tu.Person;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.*;
+import org.junit.jupiter.api.condition.EnabledOnOs;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.time.Duration;
 
@@ -16,7 +23,7 @@ public class DemoAssertions {
     @Test
     public void standardAssertions() {
         assertEquals(2, calculation.addition(1,1));
-        assertEquals(2, calculation.addition(1,2),"1+2 ne fait pas 2!");
+        assertNotEquals(2, calculation.addition(1,2),"1+2 ne fait pas 2!");
         assertTrue(1<2, "1 est bien plus petit que 2");
     }
 
@@ -126,6 +133,86 @@ public class DemoAssertions {
                 () -> assertEquals("Daune", person1.getFirstName()),
                 () -> assertNotEquals("Plop", person1.getFirstName())
                 );
+    }
+
+    @Test
+    public void depenantAssertions() {
+        Person person1 = new Person("Arnaud", "Daune");
+        assertAll(
+                "properties",
+                () -> {
+                    assertNotNull(person1.getLastName());                                   // vérifie que la personne a un last name et si oui
+                    assertAll(                                                              // on test l'ensemble de ces asserts
+                            () -> assertTrue(person1.getFirstName().startsWith("D")),       //si le getLastName avait été null, alors le test aurait directement échoué
+                            () -> assertTrue(person1.getLastName().startsWith("A"))
+                    );
+                },
+                () -> {
+                    assertNotNull(person1.getFirstName());
+                    assertAll(
+                            () -> assertTrue(person1.getLastName().endsWith("d")),
+                            () -> assertTrue(person1.getFirstName().endsWith("e"))
+                    );
+                }
+        );
+    }
+
+    @Test
+    @Disabled
+    public void testANePasPrendreEnCompte () {
+        /*
+        on utilise l'anotation @Disable pour ne plus utiliser le test, il sera alors ignoré
+         */
+    }
+
+    @Test
+    @EnabledOnOs({OS.WINDOWS})
+    public void OSTests() {
+        /*
+        test qui ne se fera que sur windows
+         */
+    }
+
+    @Target({ElementType.METHOD, ElementType.TYPE})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    @interface TestOnWindows {}
+
+    @TestOnWindows
+    public void OSTest2(){
+        /*
+        test qui ne se fera que sur windows avec anotation perso
+         */
+    };
+
+    @EnabledForJreRange(min = JRE.JAVA_8, max = JRE.JAVA_12) //entre le 8 et le 12
+    @EnabledOnJre(JRE.JAVA_8)
+    @Test
+    void onlyOnJava8() {
+        /*
+        test uniquement si la version de java est la 8
+         */
+    }
+
+    @Test
+    @EnabledIf("conditionPersonnalisee")
+    public void enableByCondition() {
+        /*
+        uniquement si conditionPerso est true
+         */
+    }
+
+    @Test
+    @DisabledIf("conditionPersonnalisee")
+    public void disableByCondition() {
+        /*
+        pas pris en compte si conditionPerso est true
+         */
+    }
+
+    public boolean conditionPersonnalisee() {
+        return true;
     }
 
 
