@@ -1,7 +1,12 @@
 package be.bxlformation.tu.assertions;
 
 import be.bxlformation.tu.Calculation;
+import be.bxlformation.tu.Person;
 import org.junit.Test;
+
+import java.lang.reflect.Field;
+import java.time.Duration;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DemoAssertions {
@@ -30,7 +35,6 @@ public class DemoAssertions {
 
     @Test
     public void divisionParZero() {
-
         int a = 5, b = 0;
         Calculation calculation1 = new Calculation();
 
@@ -54,8 +58,77 @@ public class DemoAssertions {
     }
 
     @Test
-    public void divisionParZeroCorrection() {
-        Calculation calculation1 = new Calculation();
+    public void timeoutNotExceeded() {
+        String result = assertTimeout(Duration.ofMillis(150),
+                () -> "nawak");
+        assertEquals("nawak", result); //vérifie que la chaine de char nawak ne dépasse pas 150ml lors de son instanciation
     }
+
+    /*
+    nb : on peut remplacer la lambda simplement par une méthode du type :
+    public String creerUneString(String s) {
+        return s;
+        }
+     */
+
+    /*exo : un objet personne est bien fonctionnel avec un prénom et un nom*/
+
+
+    /**
+     *  Vérifie si la classe Person a bien deux atributs nommé firstName et lastName
+     */
+
+    @Test
+    public void testClassePersonne() {
+        Person person = new Person();
+        Class<?> personClass = person.getClass();
+        NoSuchFieldException noSuchFieldException = null;
+        try {
+//            Field firstName = personClass.getField("firstName"); -> demande que les attributs soient public
+//            Field lastName = personClass.getField("lastName");
+            Field firstName = personClass.getDeclaredField("firstName");
+            Field lastName = personClass.getDeclaredField("lastName");
+        } catch (NoSuchFieldException e) {
+           noSuchFieldException = e;
+        }
+        assertNull(noSuchFieldException);
+    }
+
+    /**
+     * vérifie que first name et last name ont reçu une valeur.
+     */
+    @Test
+    public void testPersonInstance() {
+        Person person = new Person();
+
+        assertNull(person.getFirstName(), "First name is null");
+        assertNull(person.getLastName(), "Last name is null");
+
+        /*
+        null car constructeur sans paramètres
+         */
+
+        Person person1 = new Person("Arnaud", "Daune");
+
+        assertNotNull(person1.getFirstName());
+        assertNotNull(person1.getLastName());
+
+        /*
+        not null pcq constructeur avec paramètres
+         */
+    }
+
+    @Test
+    public void testPersonInstanceCorrection() {
+        Person person1 = new Person("Arnaud", "Daune");
+        assertAll("Personne",
+                () -> assertEquals("Arnaud", person1.getLastName()),
+                () -> assertEquals("Daune", person1.getFirstName()),
+                () -> assertNotEquals("Plop", person1.getFirstName())
+                );
+    }
+
+
+
 
 }
