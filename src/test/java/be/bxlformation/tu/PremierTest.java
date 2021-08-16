@@ -1,9 +1,11 @@
 package be.bxlformation.tu;
 
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisplayName("Première classe de tests")
 public class PremierTest {
 
     /**
@@ -31,6 +33,7 @@ public class PremierTest {
      */
 
     @Test
+    @DisplayName("ceci est mon premier test sur Junit")
     public void premierTest() {
         //test de réussite
 
@@ -48,6 +51,7 @@ public class PremierTest {
     }
 
     @Test
+    @DisplayName("test")
     public void premierTestFailCarPasDesEntier() {
         //Arrange
         String inputUser_a = "toto", inputUser_b = "4";
@@ -67,5 +71,7 @@ public class PremierTest {
         assertNotNull(numberFormatException);
         assertNull(numberFormatException1);
     }
+
+
 
 }
