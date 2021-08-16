@@ -10,7 +10,7 @@ public class ExoTriangle {
     private final Triangle rect = new Triangle(3,4,5);
     private final Triangle equi = new Triangle(3,3,3);
     private final Triangle iso = new Triangle(3,3,4);
-    private final Triangle scal = new Triangle(1,2,3);
+    private final Triangle scal = new Triangle(4,2,3);
 
     /**
      * Réussite :
