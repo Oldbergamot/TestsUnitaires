@@ -4,9 +4,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.EnumSet;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DemoTestParametre {
 
@@ -23,6 +25,13 @@ public class DemoTestParametre {
     @ParameterizedTest
     @EnumSource(JourSemaine.class)
     void estPresentDansEnum(JourSemaine jourSemaine) {
-        assertNotNull(jourSemaine);    }
+        assertNotNull(jourSemaine);
+    }
+
+    @ParameterizedTest
+    @EnumSource(names = {"LUNDI" , "JEUDI"})
+    public void estIncluDansEnum(JourSemaine jourSemaine) {
+        assertTrue(EnumSet.of(JourSemaine.LUNDI, JourSemaine.JEUDI).contains(jourSemaine));
+    }
 
 }
